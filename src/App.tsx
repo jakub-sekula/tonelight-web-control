@@ -64,7 +64,7 @@ export default function App() {
   return (
     <>
       <Header />
-      <main className="grid grid-cols-12 w-full max-w-7xl mx-auto gap-4 px-4 xl:px-0">
+      <main className="grid grid-cols-12 w-full max-w-7xl mx-auto gap-4 px-4 xl:px-0 pb-20">
         {status == "connected" ? (
           <>
             <div className="flex flex-col col-span-full md:col-span-6 gap-4">
@@ -72,13 +72,13 @@ export default function App() {
               <MotorControl />
             </div>
             <div className="flex flex-col col-span-full md:col-span-6 gap-4">
-              <PresetSlots />
-              <ShutterControl />
-            </div>
+              <ShutterControl className="col-span-3" />
+              {/* <PresetSlots /> */}
               <SerialConsole className="col-span-6" />
-            <div className="col-span-full">
-              <SerialMonitor />
             </div>
+            {/* <div className="col-span-full">
+              <SerialMonitor />
+            </div> */}
           </>
         ) : (
           <NotConnected className="col-span-full h-full min-h-[75vh]" />

@@ -5,6 +5,7 @@ import {
   getMotorStateString,
   getShutterStateString,
 } from "@/utils/utils";
+import KeyboardShortcutsDialog from "./KeyboardShortcutsDialog";
 
 export default function Header() {
   const { disconnect, status, deviceData } = useSerial();
@@ -46,11 +47,12 @@ export default function Header() {
           ) : null}
         </div>
         <div className="flex gap-4 items-center justify-end">
+          <KeyboardShortcutsDialog />
           {status == "connected" ? (
             <Button
-              onClick={disconnect}
-              size="sm"
-              className="bg-none border-red-600 hover:border-red-700 min-w-32 hover:bg-red-700/10 hover:text-red-500 text-red-500"
+            onClick={disconnect}
+            size="sm"
+            className="bg-none border-red-600 hover:border-red-700 min-w-32 hover:bg-red-700/10 hover:text-red-500 text-red-500"
             >
               Disconnect
             </Button>

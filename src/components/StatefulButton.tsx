@@ -25,7 +25,7 @@ export default function StatefulButton({
       }}
       className={clsx(
         active
-          ? "border-amber-600 bg-linear-to-b from-neutral-800 hover:from-neutral-800/80"
+          ? "border-amber-900 bg-linear-to-b from-neutral-800 hover:from-neutral-800/80"
           : "",
         className
       )}

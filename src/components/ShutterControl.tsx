@@ -4,13 +4,15 @@ import StatefulButton from "./StatefulButton";
 import ShutterButton from "./ShutterButton";
 import ShutterSettingsDialog from "./ShutterSettingsDialog";
 
-export default function ShutterControl() {
+export default function ShutterControl(
+  props: React.HTMLAttributes<HTMLDivElement>
+) {
   const { status, send, deviceData } = useSerial();
 
   const { shutter } = deviceData;
 
   return (
-    <Card>
+    <Card {...props}>
       {status == "connected" ? (
         <>
           <div className="flex pb-4 mb-4 items-center border-b border-neutral-800">
@@ -18,17 +20,18 @@ export default function ShutterControl() {
               Shutter
             </h2>
             <ShutterSettingsDialog />
+            <div className="flex gap-4">
+              <StatefulButton
+                activated={shutter?.triplet}
+                size="xs"
+                onClick={() => {
+                  send("shutter triplet");
+                }}
+              >
+                RGB triplet
+              </StatefulButton>
+            </div>
           </div>
-          <StatefulButton
-            activated={shutter?.triplet}
-            size="xs"
-            onClick={() => {
-              send("shutter triplet");
-            }}
-          >
-            RGB triplet
-          </StatefulButton>
-          <StatefulButton size="xs">Capture IR frame</StatefulButton>
           <ShutterButton />
         </>
       ) : (
