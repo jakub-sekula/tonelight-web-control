@@ -20,6 +20,7 @@ export default function NotConnected({ className }: { className: string }) {
           Plug in a serial USB cable<br/>and press button to connect
         </p>
         <Button
+        color='blue'
           onClick={connect}
           className="min-w-32"
         >

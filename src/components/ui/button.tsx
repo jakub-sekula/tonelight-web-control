@@ -9,7 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "text-neutral-300 border transform active:scale-[0.98] scale-100 bg-linear-to-b from-neutral-800 hover:from-neutral-800/80 border-neutral-800",
+          "text-neutral-300 border transform active:scale-[0.98] scale-100 bg-linear-to-b from-neutral-800 to-neutral-900 hover:from-neutral-800/80 border-neutral-800",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
@@ -32,13 +32,13 @@ const buttonVariants = cva(
       color: {
         default: "",
         amber:
-          "bg-linear-to-b from-amber-600 to-amber-800 border border-amber-900 text-amber-50 hover:from-amber-500 hover:to-amber-700",
+          "bg-linear-to-b from-amber-700 to-amber-800 border border-amber-900 text-amber-50 hover:from-amber-800 hover:to-amber-900",
         green:
-          "bg-linear-to-b from-green-600 to-green-800 border border-green-900 text-green-50 hover:from-green-500 hover:to-green-700",
+          "bg-linear-to-b from-green-700 to-green-800 border border-green-900 text-green-50 hover:from-green-800 hover:to-green-900",
         blue:
-          "bg-linear-to-b from-blue-600 to-blue-800 border border-blue-900 text-blue-50 hover:from-blue-500 hover:to-blue-700",
+          "bg-linear-to-b from-blue-700 to-blue-800 border border-blue-900 text-blue-50 hover:from-blue-800 hover:to-blue-900",
         red:
-          "bg-linear-to-b from-red-600 to-red-800 border border-red-900 text-red-50 hover:from-red-500 hover:to-red-700",
+          "bg-linear-to-b from-red-700 to-red-800 border border-red-900 text-red-50 hover:from-red-800 hover:to-red-900",
       },
     },
     defaultVariants: {

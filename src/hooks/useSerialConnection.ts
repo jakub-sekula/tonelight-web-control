@@ -57,40 +57,40 @@ export function useSerialDevice() {
   }, 50);
 
   // -------------------------------
-// COMMAND QUEUE SYSTEM
-// -------------------------------
-const commandQueue = useRef<string[]>([]);
-const queueBusy = useRef(false);
+  // COMMAND QUEUE SYSTEM
+  // -------------------------------
+  const commandQueue = useRef<string[]>([]);
+  const queueBusy = useRef(false);
 
-const processQueue = async () => {
-  if (queueBusy.current) return;
-  queueBusy.current = true;
+  const processQueue = async () => {
+    if (queueBusy.current) return;
+    queueBusy.current = true;
 
-  try {
-    while (commandQueue.current.length > 0 && writerRef.current) {
-      const cmd = commandQueue.current.shift();
-      if (!cmd) continue;
+    try {
+      while (commandQueue.current.length > 0 && writerRef.current) {
+        const cmd = commandQueue.current.shift();
+        if (!cmd) continue;
 
-      const encoder = new TextEncoder();
-      await writerRef.current.write(encoder.encode(cmd.trim() + "\n"));
-      appendLog("> " + cmd.trim());
+        const encoder = new TextEncoder();
+        await writerRef.current.write(encoder.encode(cmd.trim() + "\n"));
+        appendLog("> " + cmd.trim());
 
-      // small inter-command delay to prevent merging
-      await new Promise((res) => setTimeout(res, 100));
+        // small inter-command delay to prevent merging
+        await new Promise((res) => setTimeout(res, 5));
+      }
+    } finally {
+      queueBusy.current = false;
     }
-  } finally {
-    queueBusy.current = false;
-  }
-};
+  };
 
-/**
- * Adds a command to the send queue.
- * Commands are guaranteed to be sent sequentially.
- */
-const sendToQueue = (cmd: string) => {
-  commandQueue.current.push(cmd);
-  void processQueue();
-};
+  /**
+   * Adds a command to the send queue.
+   * Commands are guaranteed to be sent sequentially.
+   */
+  const sendToQueue = (cmd: string) => {
+    commandQueue.current.push(cmd);
+    void processQueue();
+  };
 
   // -------------------------------
   // CONNECT
@@ -99,8 +99,14 @@ const sendToQueue = (cmd: string) => {
     try {
       setStatus("connecting");
 
-      const selected = await navigator.serial.requestPort();
+      const filters = [
+        { usbVendorId: 12346, usbProductId: 2 }, // Espressif VID/PID
+      ];
+
+      const selected = await navigator.serial.requestPort({ filters });
       await selected.open({ baudRate: 115200 });
+
+      console.log(selected);
 
       // --- Wait for readable/writable streams ---
       const start = performance.now();
@@ -108,7 +114,7 @@ const sendToQueue = (cmd: string) => {
         (!selected.readable || !selected.writable) &&
         performance.now() - start < 1000
       ) {
-        await new Promise((res) => setTimeout(res, 50));
+        await new Promise((res) => setTimeout(res, 100));
       }
       if (!selected.readable || !selected.writable) {
         throw new Error("Serial port streams not available after open()");
@@ -174,10 +180,8 @@ const sendToQueue = (cmd: string) => {
                 // Firmware has a bug, w channel controls ir so need to swap responses
                 let key = k;
                 if (key.startsWith("led.")) {
-                  if (key.includes(".w"))
-                    key = key.replace(".w", ".ir");
-                  else if (key.includes(".ir"))
-                    key = key.replace(".ir", ".w");
+                  if (key.includes(".w")) key = key.replace(".w", ".ir");
+                  else if (key.includes(".ir")) key = key.replace(".ir", ".w");
                 }
 
                 setDeviceData((prev) => {
@@ -334,6 +338,14 @@ const sendToQueue = (cmd: string) => {
     send("status");
   };
 
+  const setMotorMode = (val: "MANUAL" | "SEMI_AUTO" | "AUTO") => {
+    const cmd =
+      val === "SEMI_AUTO"
+        ? "motor mode semi"
+        : `motor mode ${val.toLowerCase()}`;
+    send(cmd);
+  };
+
   const shoot = () => {
     console.log("Releasing shutter");
     send("shutter shoot");
@@ -349,8 +361,8 @@ const sendToQueue = (cmd: string) => {
   };
 
   const clearLog = () => {
-    setLog([])
-  }
+    setLog([]);
+  };
 
   return {
     port,
@@ -361,13 +373,14 @@ const sendToQueue = (cmd: string) => {
     connect,
     disconnect,
     send,
-    sendToQueue, 
+    sendToQueue,
     toggleDark,
     toggleTriplet,
     moveMotor,
     stopMotor,
+    setMotorMode,
     shoot,
     loadPreset,
-    clearLog
+    clearLog,
   };
 }

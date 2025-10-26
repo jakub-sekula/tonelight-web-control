@@ -44,9 +44,9 @@ declare global {
     jog_mm: number;
     backlash_steps: number;
     backlash_mm: number;
-    speed?: number;
-    accel?: number;
-    feed_speed?: number;
+    max_speed?: number;
+    max_accel?: number;
+    feed?: number;
     microsteps?: number;
     roller_diameter?: number;
     frames_auto?: number;

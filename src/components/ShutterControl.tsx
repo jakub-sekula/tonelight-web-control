@@ -17,7 +17,7 @@ export default function ShutterControl(
         <>
           <div className="flex pb-4 mb-4 items-center border-b border-neutral-800">
             <h2 className="text-lg font-semibold text-neutral-200 mr-2">
-              Shutter
+              Shutter controls
             </h2>
             <ShutterSettingsDialog />
             <div className="flex gap-4">

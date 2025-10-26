@@ -1,13 +1,13 @@
 import Header from "@/components/Header";
-import SerialConsole from "./components/SerialConsole";
-import LedControl from "./components/LedControl";
-import MotorControl from "./components/MotorControl";
-import ShutterControl from "./components/ShutterControl";
-// import PresetSlots from "./components/PresetSlots";
-// import SerialMonitor from "./components/SerialMonitor";
-import { useSerial } from "./SerialDeviceProvider";
-import NotConnected from "./components/NotConnected";
-import { useGlobalKeys } from "./hooks/useGlobalKeys";
+import SerialConsole from "@/components/SerialConsole";
+import LedControl from "@/components/LedControl";
+import MotorControl from "@/components/MotorControl";
+import ShutterControl from "@/components/ShutterControl";
+import PresetSlots from "@/components/PresetSlots";
+import SerialMonitor from "@/components/SerialMonitor";
+import { useSerial } from "@/SerialDeviceProvider";
+import NotConnected from "@/components/NotConnected";
+import { useGlobalKeys } from "@/hooks/useGlobalKeys";
 
 export default function App() {
   const {
@@ -18,14 +18,30 @@ export default function App() {
     stopMotor,
     shoot,
     loadPreset,
+    setMotorMode,
   } = useSerial();
 
   useGlobalKeys((e) => {
+    // --- Motor mode shortcuts (Shift + 1/2/3) ---
+    if (e.shiftKey && ["1", "2", "3"].includes(e.key)) {
+      e.preventDefault();
+      switch (e.key) {
+        case "1":
+          break;
+        case "2":
+          break;
+        case "3":
+          break;
+      }
+      return;
+    }
+
     const n = Number(e.key);
     if (n >= 1 && n <= 9) {
       loadPreset(n - 1);
       return;
     }
+
     switch (e.key) {
       case "1":
         loadPreset(0);
@@ -48,6 +64,15 @@ export default function App() {
       case "s":
         shoot();
         break;
+      case "z":
+        setMotorMode("MANUAL");
+        break;
+      case "x":
+        setMotorMode("SEMI_AUTO");
+        break;
+      case "c":
+        setMotorMode("AUTO");
+        break;
       case "ArrowRight":
         e.preventDefault();
         moveMotor("forward", true);
@@ -69,16 +94,16 @@ export default function App() {
           <>
             <div className="flex flex-col col-span-full md:col-span-6 gap-4">
               <LedControl />
-              <MotorControl />
+              <PresetSlots />
             </div>
             <div className="flex flex-col col-span-full md:col-span-6 gap-4">
-              <ShutterControl className="col-span-3" />
-              {/* <PresetSlots /> */}
               <SerialConsole className="col-span-6" />
+              <MotorControl />
             </div>
-            {/* <div className="col-span-full">
+            <div className="col-span-full">
+              <ShutterControl />
               <SerialMonitor />
-            </div> */}
+            </div>
           </>
         ) : (
           <NotConnected className="col-span-full h-full min-h-[75vh]" />

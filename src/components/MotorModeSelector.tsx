@@ -6,16 +6,8 @@ import clsx from "clsx";
 export default function MotorModeSelector(
   props: React.HTMLAttributes<HTMLDivElement>
 ) {
-  const { deviceData, send } = useSerial();
+  const { deviceData, setMotorMode } = useSerial();
   const mode = deviceData.motor?.mode ?? "MANUAL";
-
-  const handleSelect = (val: "MANUAL" | "SEMI_AUTO" | "AUTO") => {
-    const cmd =
-      val === "SEMI_AUTO"
-        ? "motor mode semi"
-        : `motor mode ${val.toLowerCase()}`;
-    send(cmd);
-  };
 
   const options = [
     { value: "MANUAL", label: "Manual" },
@@ -33,7 +25,7 @@ export default function MotorModeSelector(
           key={value}
           size="xs"
           activated={mode === value}
-          onClick={() => handleSelect(value)}
+          onClick={() => setMotorMode(value)}
         >
           {label}
         </StatefulButton>

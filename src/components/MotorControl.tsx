@@ -4,16 +4,18 @@ import { Button } from "@/components/ui/button";
 import MotorModeSelector from "./MotorModeSelector";
 import MotorSettingsDialog from "./MotorSettingsDialog";
 
-export default function MotorControl() {
+export default function MotorControl(
+  props: React.HTMLAttributes<HTMLDivElement>
+) {
   const { deviceData, moveMotor, stopMotor, status } = useSerial();
 
   return (
-    <Card>
+    <Card {...props}>
       {status == "connected" ? (
         <>
           <div className="flex pb-4 mb-4 items-center border-b border-neutral-800">
             <h2 className="text-lg font-semibold text-neutral-200 mr-2">
-              Motor
+              Motor controls
             </h2>
             <MotorSettingsDialog />
             <MotorModeSelector />

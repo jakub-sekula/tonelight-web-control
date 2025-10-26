@@ -6,6 +6,7 @@ import {
   getShutterStateString,
 } from "@/utils/utils";
 import KeyboardShortcutsDialog from "./KeyboardShortcutsDialog";
+import { HeaderStateIndicator } from "./HeaderStateIndicator";
 
 export default function Header() {
   const { disconnect, status, deviceData } = useSerial();
@@ -21,38 +22,32 @@ export default function Header() {
         <div className="flex gap-8 items-center justify-center">
           {status === "connected" ? (
             <>
-              <div className="flex flex-col min-w-24 items-center justify-center text-center">
-                <h4 className="text-xs text-neutral-500">Shutter</h4>
-                <span className="text-sm text-white">
-                  {getShutterStateString(shutter?.state)}
-                </span>
-              </div>
-              <div className="flex flex-col min-w-24 items-center justify-center text-center">
-                <h4 className="text-xs text-neutral-500">Motor</h4>
-                <span className="text-sm text-white">
-                  {getMotorStateString(motor?.state)}
-                </span>
-              </div>
-              <div className="flex flex-col min-w-24 items-center justify-center text-center">
-                <h4 className="text-xs text-neutral-500">IO mode</h4>
-                <span className="text-sm text-white">
-                  {getIOModeString(device?.mode)}
-                </span>
-              </div>
-              <div className="flex flex-col min-w-24 items-center justify-center text-center">
-                <h4 className="text-xs text-neutral-500">Status</h4>
-                <span className="text-sm text-white capitalize">{status}</span>
-              </div>
+              <HeaderStateIndicator
+                label="Shutter"
+                value={getShutterStateString(shutter?.state)}
+                type="shutter"
+              />
+              <HeaderStateIndicator
+                label="Motor"
+                value={getMotorStateString(motor?.state)}
+                type="motor"
+              />
+              <HeaderStateIndicator
+                label="Front IO"
+                value={getIOModeString(device?.mode)}
+                type="io"
+              />
             </>
           ) : null}
+          <HeaderStateIndicator label="Status" value={status} type="status" />
         </div>
         <div className="flex gap-4 items-center justify-end">
           <KeyboardShortcutsDialog />
           {status == "connected" ? (
             <Button
-            onClick={disconnect}
-            size="sm"
-            className="bg-none border-red-600 hover:border-red-700 min-w-32 hover:bg-red-700/10 hover:text-red-500 text-red-500"
+              onClick={disconnect}
+              size="sm"
+              className="bg-none border-red-600 hover:border-red-700 min-w-32 hover:bg-red-700/10 hover:text-red-500 text-red-500"
             >
               Disconnect
             </Button>

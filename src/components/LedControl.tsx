@@ -13,7 +13,7 @@ export default function LedControl() {
     { channel: "w", color: "white", label: "White" },
   ];
   return (
-    <Card>
+    <Card className="shrink grow-0">
       {status == "connected" ? (
         <>
           <div className="flex justify-between pb-4 mb-4 items-center border-b border-neutral-800">
