@@ -99,11 +99,12 @@ export function useSerialDevice() {
     try {
       setStatus("connecting");
 
+      //@ts-expect-error temporarily not using this
       const filters = [
         { usbVendorId: 12346, usbProductId: 2 }, // Espressif VID/PID
       ];
 
-      const selected = await navigator.serial.requestPort({ filters });
+      const selected = await navigator.serial.requestPort();
       await selected.open({ baudRate: 115200 });
 
       console.log(selected);
