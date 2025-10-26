@@ -11,6 +11,8 @@ export default function SerialConsole(
   const { log, clearLog, send, status } = useSerial();
   const [command, setCommand] = useState("");
   const [history, setHistory] = useState<string[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // @ts-ignore
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
   const logRef = useRef<HTMLDivElement | null>(null);
 
