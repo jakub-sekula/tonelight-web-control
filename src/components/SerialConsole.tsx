@@ -11,8 +11,7 @@ export default function SerialConsole(
   const { log, clearLog, send, status } = useSerial();
   const [command, setCommand] = useState("");
   const [history, setHistory] = useState<string[]>([]);
-  // @ts-expect-error nvm
-  const [historyIndex, setHistoryIndex] = useState<number | null>(null);
+  const historyIndex = useRef<number | null>(null);
   const logRef = useRef<HTMLDivElement | null>(null);
 
   // Clear console on first load to hide initial state message
@@ -28,7 +27,7 @@ export default function SerialConsole(
     // Intercept the "clear" command
     if (cmd.toLowerCase() === "clear") {
       setHistory((h) => [...h, cmd]);
-      setHistoryIndex(null);
+      historyIndex.current = null;
       setCommand("");
       clearLog(); // <-- clear the console
       return;
@@ -36,7 +35,7 @@ export default function SerialConsole(
 
     send(cmd);
     setHistory((h) => [...h, cmd]);
-    setHistoryIndex(null);
+    historyIndex.current = null;
     setCommand("");
   }
 
@@ -47,23 +46,23 @@ export default function SerialConsole(
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowUp") {
       e.preventDefault();
-      setHistoryIndex((i) => {
-        const newIndex = i === null ? history.length - 1 : Math.max(i - 1, 0);
-        setCommand(history[newIndex] ?? command);
-        return newIndex;
-      });
+      const newIndex =
+        historyIndex.current === null
+          ? history.length - 1
+          : Math.max(historyIndex.current - 1, 0);
+      setCommand(history[newIndex] ?? command);
+      historyIndex.current = newIndex;
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
-      setHistoryIndex((i) => {
-        if (i === null) return null;
-        const newIndex = i + 1;
-        if (newIndex >= history.length) {
-          setCommand("");
-          return null;
-        }
-        setCommand(history[newIndex]);
-        return newIndex;
-      });
+      if (historyIndex.current === null) return;
+      const newIndex = historyIndex.current + 1;
+      if (newIndex >= history.length) {
+        setCommand("");
+        historyIndex.current = null;
+        return;
+      }
+      setCommand(history[newIndex]);
+      historyIndex.current = newIndex;
     }
   };
 

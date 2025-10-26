@@ -40,7 +40,9 @@ export default function KeyboardShortcutsDialog() {
       <DialogTrigger asChild>
         <Button
           size="xs"
-          className="bg-none border-none text-neutral-400 px-0 mt-0.5"
+          className="bg-none hover:text-amber-500 border-none text-neutral-400 aspect-square p-1 mt-0.5"
+          title="View keyboard shortcuts"
+
         >
           <Keyboard size={16} />
         </Button>

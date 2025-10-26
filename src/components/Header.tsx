@@ -7,6 +7,7 @@ import {
 } from "@/utils/utils";
 import KeyboardShortcutsDialog from "./KeyboardShortcutsDialog";
 import { HeaderStateIndicator } from "./HeaderStateIndicator";
+import SerialConsoleDialog from "./SerialConsoleDialog";
 
 export default function Header() {
   const { disconnect, status, deviceData } = useSerial();
@@ -43,6 +44,7 @@ export default function Header() {
         </div>
         <div className="flex gap-4 items-center justify-end">
           <KeyboardShortcutsDialog />
+          <SerialConsoleDialog />
           {status == "connected" ? (
             <Button
               onClick={disconnect}

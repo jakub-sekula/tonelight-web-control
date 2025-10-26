@@ -26,35 +26,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type MotorFormValues = {
-  travel_mm: number;
-  jog_mm: number;
-  backlash_mm: number;
-  feed_speed: number;
-  microsteps: number;
-  roller_diameter: number;
-  frames_in_auto: number;
-  speed: number;
-  accel: number;
-};
-
 export default function MotorSettingsDialog() {
   const { sendToQueue, deviceData } = useSerial();
   const [open, setOpen] = useState(false);
 
   const motor = deviceData?.motor;
 
-  const form = useForm<MotorFormValues>({
+  const round = (v: number | undefined, decimals = 2) =>
+    Number.isFinite(v) ? Number(v!.toFixed(decimals)) : 0;
+
+  const form = useForm<MotorState>({
     defaultValues: {
-      travel_mm: motor?.travel_mm ?? 0,
-      jog_mm: motor?.jog_mm ?? 0,
-      backlash_mm: motor?.backlash_mm ?? 0.0,
-      feed_speed: motor?.feed ?? 0,
+      travel_mm: round(motor?.travel_mm, 2),
+      jog_mm: round(motor?.jog_mm, 2),
+      backlash_mm: round(motor?.backlash_mm, 3),
+      feed_speed: round(motor?.feed_speed, 0),
       microsteps: motor?.microsteps ?? 0,
-      roller_diameter: motor?.roller_diameter ?? 0.0,
-      frames_in_auto: motor?.frames_auto ?? 0,
-      speed: motor?.max_speed ?? 0,
-      accel: motor?.max_accel ?? 0,
+      roller_diameter: round(motor?.roller_diameter, 3),
+      frames_auto: round(motor?.frames_auto, 0),
+      max_speed: round(motor?.max_speed, 0),
+      max_accel: round(motor?.max_accel, 0),
     },
   });
 
@@ -62,15 +53,15 @@ export default function MotorSettingsDialog() {
     setOpen(open);
     if (open && motor) {
       form.reset({
-        travel_mm: motor.travel_mm ?? 0,
-        jog_mm: motor.jog_mm ?? 0,
-        backlash_mm: motor.backlash_mm ?? 0.1,
-        feed_speed: motor.feed ?? 0,
+        travel_mm: round(motor.travel_mm, 2),
+        jog_mm: round(motor.jog_mm, 2),
+        backlash_mm: round(motor.backlash_mm, 3),
+        feed_speed: round(motor.feed_speed, 0),
         microsteps: motor.microsteps ?? 0,
-        roller_diameter: motor.roller_diameter ?? 0.0,
-        frames_in_auto: motor.frames_auto ?? 0,
-        speed: motor.max_speed ?? 0,
-        accel: motor.max_accel ?? 0,
+        roller_diameter: round(motor.roller_diameter, 3),
+        frames_auto: round(motor.frames_auto, 0),
+        max_speed: round(motor.max_speed, 0),
+        max_accel: round(motor.max_accel, 0),
       });
     }
   };
@@ -78,19 +69,19 @@ export default function MotorSettingsDialog() {
   useEffect(() => {
     if (!motor) return;
     form.reset({
-      travel_mm: motor.travel_mm ?? 0,
-      jog_mm: motor.jog_mm ?? 0,
-      backlash_mm: motor.backlash_mm ?? 0.1,
-      feed_speed: motor.feed ?? 0,
+      travel_mm: round(motor.travel_mm, 2),
+      jog_mm: round(motor.jog_mm, 2),
+      backlash_mm: round(motor.backlash_mm, 3),
+      feed_speed: round(motor.feed_speed, 0),
       microsteps: motor.microsteps ?? 0,
-      roller_diameter: motor.roller_diameter ?? 0.0,
-      frames_in_auto: motor.frames_auto ?? 0,
-      speed: motor.max_speed ?? 0,
-      accel: motor.max_accel ?? 0,
+      roller_diameter: round(motor.roller_diameter, 3),
+      frames_auto: round(motor.frames_auto, 0),
+      max_speed: round(motor.max_speed, 0),
+      max_accel: round(motor.max_accel, 0),
     });
   }, [motor, form]);
 
-  const onSubmit = (data: MotorFormValues) => {
+  const onSubmit = (data: MotorState) => {
     const { dirtyFields } = form.formState;
     const cmds: string[] = [];
 
@@ -103,28 +94,47 @@ export default function MotorSettingsDialog() {
       cmds.push(`motor microsteps ${data.microsteps}`);
     if (dirtyFields.roller_diameter)
       cmds.push(`motor diameter ${data.roller_diameter}`);
-    if (dirtyFields.frames_in_auto)
-      cmds.push(`motor frames ${data.frames_in_auto}`);
-    if (dirtyFields.speed) cmds.push(`motor speed ${data.speed}`);
-    if (dirtyFields.accel) cmds.push(`motor accel ${data.accel}`);
+    if (dirtyFields.frames_auto) cmds.push(`motor frames ${data.frames_auto}`);
+    if (dirtyFields.max_speed) cmds.push(`motor speed ${data.max_speed}`);
+    if (dirtyFields.max_accel) cmds.push(`motor accel ${data.max_accel}`);
 
     cmds.forEach((cmd) => sendToQueue(cmd));
     setOpen(false);
   };
 
   const numericFields = [
-    { name: "travel_mm", label: "Travel", step: 0.1, unit: "mm" },
-    { name: "jog_mm", label: "Jog", step: 0.1, unit: "mm" },
-    { name: "backlash_mm", label: "Backlash", step: 0.01, unit: "mm" },
-    { name: "frames_in_auto", label: "Frames", step: 1, unit: "" },
-    { name: "speed", label: "Speed", step: 1, max: 4000, unit: "st/s" },
-    { name: "feed_speed", label: "Feed speed", step: 1, unit: "st/s" },
-    { name: "accel", label: "Accel", step: 1, unit: "st/s²" },
+    { name: "travel_mm", label: "Travel", step: null, unit: "mm", decimals: 2 },
+    { name: "jog_mm", label: "Jog", step: null, unit: "mm", decimals: 2 },
+    {
+      name: "backlash_mm",
+      label: "Backlash",
+      step: null,
+      unit: "mm",
+      decimals: 2,
+    },
+    { name: "frames_auto", label: "Frames", step: 1, unit: "", decimals: 0 },
+    {
+      name: "max_speed",
+      label: "Speed",
+      step: 1,
+      max: 4000,
+      unit: "st/s",
+      decimals: 0,
+    },
+    {
+      name: "feed_speed",
+      label: "Feed speed",
+      step: 1,
+      unit: "st/s",
+      decimals: 0,
+    },
+    { name: "max_accel", label: "Accel", step: 1, unit: "st/s²", decimals: 0 },
     {
       name: "roller_diameter",
       label: "Roller diameter",
-      step: 0.01,
+      step: null,
       unit: "mm",
+      decimals: 3,
     },
   ] as const;
 
@@ -152,11 +162,23 @@ export default function MotorSettingsDialog() {
             className="flex flex-col gap-4 mt-4"
             autoComplete="off"
           >
-            {numericFields.map(({ name, label, step, unit }) => (
+            {numericFields.map(({ name, label, step, unit, decimals }) => (
               <FormField
                 key={name}
                 control={form.control}
-                name={name as keyof MotorFormValues}
+                name={
+                  name as keyof Pick<
+                    MotorState,
+                    | "travel_mm"
+                    | "jog_mm"
+                    | "backlash_mm"
+                    | "feed_speed"
+                    | "roller_diameter"
+                    | "frames_auto"
+                    | "max_speed"
+                    | "max_accel"
+                  >
+                }
                 render={({ field }) => (
                   <FormItem className="flex justify-between items-center gap-3">
                     <FormLabel className="text-xs text-neutral-300 w-32">
@@ -165,12 +187,21 @@ export default function MotorSettingsDialog() {
                     <FormControl>
                       <div className="relative max-w-24">
                         <Input
-                          {...field}
                           type="number"
-                          step={step}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value) || 0)
-                          }
+                          step={step ?? "any"}
+                          value={field.value ?? ""}
+                          onChange={(e) => {
+                            const v = e.target.value;
+                            field.onChange(v === "" ? "" : Number(v));
+                          }}
+                          onBlur={(e) => {
+                            const v = parseFloat(e.target.value);
+                            if (!Number.isNaN(v)) {
+                              const rounded = Number(v.toFixed(decimals));
+                              field.onChange(rounded);
+                              e.target.value = rounded.toFixed(decimals);
+                            }
+                          }}
                           className="w-full pr-5 text-left text-xs bg-black border-neutral-800"
                         />
                         {unit && (

@@ -4,6 +4,15 @@ declare global {
   // -----------------------------------------------------------
   //  LED SYSTEM
   // -----------------------------------------------------------
+
+  interface LedPresetState {
+  r: number;
+  g: number;
+  b: number;
+  ir: number;
+  w: number;
+  channel: number;
+}
   interface LedState {
     mode: string;
     preset: number;
@@ -14,6 +23,7 @@ declare global {
     w: number;
     channel?: string;
     page?: number;
+    presets?: Record<number, LedPresetState>;
   }
 
   type LedChannel = "r" | "g" | "b" | "ir" | "w";
@@ -46,7 +56,7 @@ declare global {
     backlash_mm: number;
     max_speed?: number;
     max_accel?: number;
-    feed?: number;
+    feed_speed?: number;
     microsteps?: number;
     roller_diameter?: number;
     frames_auto?: number;

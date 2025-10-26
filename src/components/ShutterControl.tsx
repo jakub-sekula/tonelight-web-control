@@ -20,19 +20,25 @@ export default function ShutterControl(
               Shutter controls
             </h2>
             <ShutterSettingsDialog />
-            <div className="flex gap-4">
+          </div>
+          <div className="flex grow gap-4">
+            <div className="flex flex-col gap-4 w-full items-center justify-around">
               <StatefulButton
                 activated={shutter?.triplet}
                 size="xs"
                 onClick={() => {
                   send("shutter triplet");
                 }}
+                className="w-full max-w-none"
               >
                 RGB triplet
               </StatefulButton>
+              <StatefulButton size="xs" disabled className="w-full max-w-none">
+                Capture IR
+              </StatefulButton>
             </div>
+            <ShutterButton />
           </div>
-          <ShutterButton />
         </>
       ) : (
         "Device not connected"

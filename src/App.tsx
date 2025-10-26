@@ -1,10 +1,9 @@
 import Header from "@/components/Header";
-import SerialConsole from "@/components/SerialConsole";
 import LedControl from "@/components/LedControl";
 import MotorControl from "@/components/MotorControl";
 import ShutterControl from "@/components/ShutterControl";
 import PresetSlots from "@/components/PresetSlots";
-import SerialMonitor from "@/components/SerialMonitor";
+// import SerialMonitor from "@/components/SerialMonitor";
 import { useSerial } from "@/SerialDeviceProvider";
 import NotConnected from "@/components/NotConnected";
 import { useGlobalKeys } from "@/hooks/useGlobalKeys";
@@ -94,16 +93,15 @@ export default function App() {
           <>
             <div className="flex flex-col col-span-full md:col-span-6 gap-4">
               <LedControl />
-              <PresetSlots />
+              <ShutterControl className="w-1/2 shrink grow-0" />
             </div>
             <div className="flex flex-col col-span-full md:col-span-6 gap-4">
-              <SerialConsole className="col-span-6" />
+              <PresetSlots className="grow-0"/>
               <MotorControl />
             </div>
-            <div className="col-span-full">
-              <ShutterControl />
+            {/* <div className="col-span-full">
               <SerialMonitor />
-            </div>
+            </div> */}
           </>
         ) : (
           <NotConnected className="col-span-full h-full min-h-[75vh]" />

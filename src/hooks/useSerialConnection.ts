@@ -168,15 +168,22 @@ export function useSerialDevice() {
               if (line.startsWith("[API]")) {
                 const txt = line.replace("[API]", "").trim();
                 const [k, v] = txt.split("=");
-                const num = parseFloat(v);
-                const val =
-                  isNaN(num) && v !== "true" && v !== "false"
-                    ? v
-                    : v === "true"
-                    ? true
-                    : v === "false"
-                    ? false
-                    : num;
+
+                let val: unknown = v;
+
+                if (k !== "led.presets") {
+                  const num = parseFloat(v);
+
+                  if (v === "true") {
+                    val = true;
+                  } else if (v === "false") {
+                    val = false;
+                  } else if (!isNaN(num)) {
+                    val = num;
+                  } else {
+                    val = v;
+                  }
+                }
 
                 // Firmware has a bug, w channel controls ir so need to swap responses
                 let key = k;
@@ -189,15 +196,39 @@ export function useSerialDevice() {
                   const next = structuredClone(prev);
                   const parts = k.split(".");
                   let obj: Record<string, unknown> = next;
+
+                  // Special-case LED presets
+                  if (k === "led.presets" && typeof val === "string") {
+                    const presets: Record<number, LedPresetState> = {};
+
+                    console.log(val);
+
+                    val.split(";").forEach((entry) => {
+                      const [idxPart, valuesPart] = entry.split(":");
+                      const idx = Number(idxPart);
+                      const nums = valuesPart?.split(".").map(Number);
+                      if (!Number.isFinite(idx) || !nums || nums.length < 6)
+                        return;
+
+                      const [r, g, b, ir, w, channel] = nums;
+                      presets[idx] = { r, g, b, ir, w, channel };
+                    });
+
+                    if (!next.led) next.led = {} as LedState;
+                    next.led.presets = presets;
+                    return next;
+                  }
+
+                  // Default nested assignment
                   for (let i = 0; i < parts.length - 1; i++) {
                     if (
                       typeof obj[parts[i]] !== "object" ||
                       obj[parts[i]] === null
-                    ) {
+                    )
                       obj[parts[i]] = {};
-                    }
                     obj = obj[parts[i]] as Record<string, unknown>;
                   }
+
                   obj[parts[parts.length - 1]] = val;
                   return next;
                 });
@@ -357,8 +388,30 @@ export function useSerialDevice() {
       console.warn("Incorrect preset number! Allowed 0-8");
       return;
     }
-    console.log(`Loading preset ${preset}`);
-    send(`led preset ${preset}`);
+    console.log(`Loading preset slot ${preset}`);
+    sendToQueue(`led preset load ${preset}`);
+  };
+
+  const savePreset = (preset: number) => {
+    if (preset > 8 || preset < 0) {
+      console.warn("Incorrect preset number! Allowed 0-8");
+      return;
+    }
+    console.log(`Saving current panel state to preset slot ${preset}`);
+    sendToQueue(`led preset save ${preset}`);
+  };
+
+
+  const pushPreset = (index: number, preset: LedPresetState) => {
+    if (index > 8 || index < 0) {
+      console.warn("Incorrect preset number! Allowed 0-8");
+      return;
+    }
+
+    const presetString = `r.${preset.r} g.${preset.g} b.${preset.b} ir.${preset.ir} w.${preset.w} ch.${preset.channel}`;
+
+    console.log(`Pushing preset to  slot ${index}`);
+    sendToQueue(`led preset push ${index} ${presetString}`);
   };
 
   const clearLog = () => {
@@ -382,6 +435,8 @@ export function useSerialDevice() {
     setMotorMode,
     shoot,
     loadPreset,
+    savePreset,
+    pushPreset,
     clearLog,
   };
 }

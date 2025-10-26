@@ -32,19 +32,83 @@ const buttonVariants = cva(
       color: {
         default: "",
         amber:
-          "bg-linear-to-b from-amber-700 to-amber-800 border border-amber-900 text-amber-50 hover:from-amber-800 hover:to-amber-900",
+          "bg-linear-to-b from-amber-500 to-amber-600 border border-amber-900 text-amber-50 hover:from-amber-600 hover:to-amber-700",
         green:
-          "bg-linear-to-b from-green-700 to-green-800 border border-green-900 text-green-50 hover:from-green-800 hover:to-green-900",
-        blue:
-          "bg-linear-to-b from-blue-700 to-blue-800 border border-blue-900 text-blue-50 hover:from-blue-800 hover:to-blue-900",
-        red:
-          "bg-linear-to-b from-red-700 to-red-800 border border-red-900 text-red-50 hover:from-red-800 hover:to-red-900",
+          "bg-linear-to-b from-green-500 to-green-600 border border-green-900 text-green-50 hover:from-green-600 hover:to-green-700",
+        blue: "bg-linear-to-b from-blue-500 to-blue-800 border border-blue-900 text-blue-50 hover:from-blue-600 hover:to-blue-700",
+        red: "bg-linear-to-b from-red-500 to-red-600 border border-red-900 text-red-50 hover:from-red-600 hover:to-red-700",
+        purple:
+          "bg-linear-to-b from-purple-500 to-purple-600 border border-purple-900 text-purple-50 hover:from-purple-600 hover:to-purple-700",
+        grey: "bg-linear-to-b from-neutral-500 to-neutral-600 border border-neutral-900 text-neutral-50 hover:from-neutral-600 hover:to-neutral-700",
+      },
+      glow: {
+        none: "",
+        subtle: "shadow-[0_0_8px_var(--glow-color)]",
+        strong:
+          "shadow-[0_0_16px_color-mix(in_srgb,var(--glow-color)_100%,transparent)] shadow-[0_0_25px_color-mix(in_srgb,var(--glow-color)_85%,transparent)] shadow-[0_0_40px_color-mix(in_srgb,var(--glow-color)_70%,transparent)] shadow-[0_0_60px_color-mix(in_srgb,var(--glow-color)_50%,transparent)]",
       },
     },
+    compoundVariants: [
+      {
+        color: "red",
+        glow: "subtle",
+        class: "[--glow-color:theme(colors.red.500)]",
+      },
+      {
+        color: "red",
+        glow: "strong",
+        class: "[--glow-color:theme(colors.red.500)]",
+      },
+
+      {
+        color: "green",
+        glow: "subtle",
+        class: "[--glow-color:theme(colors.green.500)]",
+      },
+      {
+        color: "green",
+        glow: "strong",
+        class: "[--glow-color:theme(colors.green.500)]",
+      },
+
+      {
+        color: "blue",
+        glow: "subtle",
+        class: "[--glow-color:theme(colors.blue.500)]",
+      },
+      {
+        color: "blue",
+        glow: "strong",
+        class: "[--glow-color:theme(colors.blue.500)]",
+      },
+
+      {
+        color: "purple",
+        glow: "subtle",
+        class: "[--glow-color:theme(colors.purple.500)]",
+      },
+      {
+        color: "purple",
+        glow: "strong",
+        class: "[--glow-color:theme(colors.purple.500)]",
+      },
+
+      {
+        color: "amber",
+        glow: "subtle",
+        class: "[--glow-color:theme(colors.amber.500)]",
+      },
+      {
+        color: "amber",
+        glow: "strong",
+        class: "[--glow-color:theme(colors.amber.500)]",
+      },
+    ],
     defaultVariants: {
       variant: "default",
       size: "default",
       color: "default",
+      glow: "none",
     },
   }
 );
@@ -54,6 +118,7 @@ function Button({
   variant,
   size,
   color,
+  glow,
   asChild = false,
   ...props
 }: React.ComponentProps<"button"> &
@@ -65,7 +130,7 @@ function Button({
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, color, className }))}
+      className={cn(buttonVariants({ variant, size, color, className, glow }))}
       {...props}
     />
   );

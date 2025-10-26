@@ -5,10 +5,9 @@ import { useSerial } from "@/SerialDeviceProvider";
 
 // --- Main component ---
 export default function SerialMonitor() {
-  const {  deviceData, send} = useSerial();
+  const { deviceData, send } = useSerial();
 
   const jogRef = useRef<HTMLDivElement | null>(null);
-
 
   // --- Scroll jog area ---
   useEffect(() => {
@@ -31,18 +30,24 @@ export default function SerialMonitor() {
     return Object.keys(obj).reduce<Record<string, unknown>>((acc, key) => {
       const value = obj[key];
       const newKey = prefix ? `${prefix}.${key}` : key;
+
+      // Skip flattening presets, keep as object
+      if (newKey === "led.presets") {
+        acc[newKey] = value;
+        return acc;
+      }
+
       if (value && typeof value === "object" && !Array.isArray(value)) {
         Object.assign(acc, flatten(value as Record<string, unknown>, newKey));
       } else {
         acc[newKey] = value;
       }
+
       return acc;
     }, {});
   }
 
   const flatState = flatten(deviceData);
-
-
 
   // ----------------------------------------------------------
   // RENDER
@@ -71,8 +76,17 @@ export default function SerialMonitor() {
                       <td className="px-2 py-1 text-gray-400 whitespace-nowrap">
                         {k}
                       </td>
-                      <td className="px-2 py-1 text-white break-all">
-                        {String(v)}
+                      <td className="px-2 py-1 text-white break-all align-top">
+                        {typeof v === "object" && v !== null ? (
+                          <pre className="whitespace-pre-wrap text-[0.7rem] text-neutral-300">
+                            {JSON.stringify(v, null, 2)
+                              .replace(/[{}"]/g, "")
+                              .replace(/,/g, "")
+                              .trim()}
+                          </pre>
+                        ) : (
+                          String(v)
+                        )}
                       </td>
                     </tr>
                   ))}
