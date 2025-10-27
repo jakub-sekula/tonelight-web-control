@@ -20,24 +20,26 @@ export default function ShutterControl(
               Shutter controls
             </h2>
             <ShutterSettingsDialog />
-          </div>
-          <div className="flex grow gap-4">
-            <div className="flex flex-col gap-4 w-full items-center justify-around">
+            <div className="flex gap-4">
               <StatefulButton
                 activated={shutter?.triplet}
                 size="xs"
                 onClick={() => {
                   send("shutter triplet");
                 }}
-                className="w-full max-w-none"
               >
                 RGB triplet
               </StatefulButton>
-              <StatefulButton size="xs" disabled className="w-full max-w-none">
+              <StatefulButton
+                size="xs"
+                disabled
+              >
                 Capture IR
               </StatefulButton>
             </div>
-            <ShutterButton />
+          </div>
+          <div className="flex grow gap-4">
+            <ShutterButton className="w-full h-full max-h-none grow shrink-0"/>
           </div>
         </>
       ) : (

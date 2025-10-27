@@ -72,7 +72,7 @@ export function LedSlider({
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-1">
       <span className="text-xs text-neutral-400 font-light">{label}</span>
       <div className="flex gap-4 items-center">
         <Slider
@@ -80,12 +80,12 @@ export function LedSlider({
           max={1023}
           step={1}
           trackClassName={clsx(
-            "h-5 rounded-full border border-neutral-800 bg-black",
+            "h-6 rounded-full border border-neutral-800 bg-black",
             c.track
           )}
           rangeClassName={clsx(c.range)}
           thumbClassName={clsx(
-            "size-6 rounded-full transition-all duration-150 hover:scale-110 focus-visible:ring-4 focus-visible:ring-white/30",
+            "size-7 rounded-full transition-all duration-150 hover:scale-110 focus-visible:ring-4 focus-visible:ring-white/30",
             c.thumb
           )}
           className={className}

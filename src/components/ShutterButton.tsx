@@ -14,7 +14,7 @@ export default function ShutterButton(
         send("shutter shoot");
         props.onClick?.(e);
       }}
-      className={clsx(props.className, "rounded-full size-24 aspect-square")}
+      className={clsx(props.className, "")}
     >
       Shoot
     </Button>

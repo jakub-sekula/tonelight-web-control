@@ -3,7 +3,7 @@ import { useSerial } from "@/SerialDeviceProvider";
 import Card from "./Card";
 import StatefulButton from "./StatefulButton";
 
-export default function LedControl() {
+export default function LedControl(props: React.HTMLAttributes<HTMLDivElement>) {
   const { deviceData, toggleDark, send, status } = useSerial();
   const leds: Partial<LedState> = deviceData.led ?? {};
   const sliders: { channel: LedChannel; color: LedColor; label: string }[] = [
@@ -13,7 +13,7 @@ export default function LedControl() {
     { channel: "w", color: "white", label: "White" },
   ];
   return (
-    <Card className="shrink grow-0">
+    <Card {...props}>
       {status == "connected" ? (
         <>
           <div className="flex justify-between pb-4 mb-4 items-center border-b border-neutral-800">
@@ -30,7 +30,7 @@ export default function LedControl() {
               Dark
             </StatefulButton>
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-8">
             {sliders.map(({ channel, color, label }) => (
               <LedSlider
                 key={channel}

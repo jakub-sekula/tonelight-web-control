@@ -61,19 +61,24 @@ export default function MotorControl(
           </div>
 
           <div className="flex pt-3 mt-4 items-center border-t border-neutral-800">
-            <div className="flex flex-col min-w-24 ">
-              <h4 className="text-xs text-neutral-500">Current frame</h4>
-              <span className="text-sm text-white">{`${deviceData.motor?.current_frame} of ${deviceData.motor?.frames_auto}`}</span>
-            </div>
+            {deviceData.motor?.mode === "AUTO" ? (
+              <div className="flex flex-col min-w-24 ">
+                <h4 className="text-xs text-neutral-500">
+                  Current frame
+                </h4>
+                <span className="text-sm text-white">{`${deviceData.motor?.current_frame} of ${deviceData.motor?.frames_auto}`}</span>
+              </div>
+            ) : null}
+
             <Button
               color="red"
               onClick={() => {
                 stopMotor();
               }}
-              size="xs"
+              // size="xs"
               className=" ml-auto"
             >
-              Stop motor
+              E-Stop
             </Button>
           </div>
         </>

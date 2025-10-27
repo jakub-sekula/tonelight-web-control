@@ -92,8 +92,8 @@ export default function App() {
         {status == "connected" ? (
           <>
             <div className="flex flex-col col-span-full md:col-span-6 gap-4">
-              <LedControl />
-              <ShutterControl className="w-1/2 shrink grow-0" />
+              <LedControl className="grow" />
+              <ShutterControl className="w-1/2 shrink" />
             </div>
             <div className="flex flex-col col-span-full md:col-span-6 gap-4">
               <PresetSlots/>
