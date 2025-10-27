@@ -15,21 +15,28 @@ export default function App() {
     toggleTriplet,
     moveMotor,
     stopMotor,
+    feedForward,
+    feedBackward,
+    stopFeeding,
     shoot,
     loadPreset,
     setMotorMode,
+    sendToQueue
   } = useSerial();
 
-  useGlobalKeys((e) => {
-    // --- Motor mode shortcuts (Shift + 1/2/3) ---
+useGlobalKeys(
+  (e) => {
     if (e.shiftKey && ["1", "2", "3"].includes(e.key)) {
       e.preventDefault();
       switch (e.key) {
         case "1":
+          setMotorMode("MANUAL");
           break;
         case "2":
+          setMotorMode("SEMI_AUTO");
           break;
         case "3":
+          setMotorMode("AUTO");
           break;
       }
       return;
@@ -41,10 +48,7 @@ export default function App() {
       return;
     }
 
-    switch (e.key) {
-      case "1":
-        loadPreset(0);
-        break;
+    switch (e.key.toLowerCase()) {
       case "d":
         toggleDark();
         break;
@@ -72,18 +76,29 @@ export default function App() {
       case "c":
         setMotorMode("AUTO");
         break;
-      case "ArrowRight":
+      case "arrowright":
         e.preventDefault();
         moveMotor("forward", true);
         break;
-      case "ArrowLeft":
+      case "arrowleft":
         e.preventDefault();
         moveMotor("backward", true);
         break;
       default:
         break;
     }
-  });
+  },
+  (key, isDown) => {
+    if (isDown) {
+      if (key === "l") feedBackward();
+      else if (key === "j") feedForward();
+    } else {
+      if (key === "j" || key === "l") stopFeeding();
+    }
+  },
+  400
+);
+
 
   return (
     <>
