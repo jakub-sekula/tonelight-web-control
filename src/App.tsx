@@ -96,8 +96,8 @@ export default function App() {
               <ShutterControl className="w-1/2 shrink grow-0" />
             </div>
             <div className="flex flex-col col-span-full md:col-span-6 gap-4">
-              <PresetSlots className="grow-0"/>
-              <MotorControl />
+              <PresetSlots/>
+              <MotorControl className="grow-0" />
             </div>
             {/* <div className="col-span-full">
               <SerialMonitor />

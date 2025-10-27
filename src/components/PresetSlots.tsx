@@ -198,6 +198,9 @@ export default function PresetSlots(
           <PresetButton key={i} preset={slot} index={i} />
         ))}
       </div>
+      <div className="flex pt-3 mt-4 items-center border-t border-neutral-800">
+        <span className="text-xs text-neutral-500">Left click to enable. Right click to save current settings to slot.</span>
+      </div>
     </Card>
   );
 }

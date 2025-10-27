@@ -21,60 +21,60 @@ export default function MotorControl(
             <MotorModeSelector />
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex w-full h-24 gap-4">
             <Button
               onClick={() => {
                 moveMotor("backward", true);
               }}
               size="xs"
+              className="w-full grow-0 shrink max-h-none h-full"
             >
-              Jog -
+              Adjust -
             </Button>
             <Button
               onClick={() => {
                 moveMotor("backward");
               }}
+              className="w-full grow-0 shrink max-h-none h-full"
               size="xs"
             >
-              Move backward
+              Previous frame
             </Button>
             <Button
               onClick={() => {
                 moveMotor("forward");
               }}
+              className="w-full grow-0 shrink max-h-none h-full"
               size="xs"
             >
-              Move forward
+              Next frame
             </Button>
             <Button
               onClick={() => {
                 moveMotor("forward", true);
               }}
+              className="w-full grow-0 shrink max-h-none h-full"
               size="xs"
             >
-              Jog +
+              Adjust +
             </Button>
           </div>
-          <Button
-            color="red"
-            onClick={() => {
-              stopMotor();
-            }}
-            size="xs"
-          >
-            Stop
-          </Button>
+
           <div className="flex pt-3 mt-4 items-center border-t border-neutral-800">
             <div className="flex flex-col min-w-24 ">
               <h4 className="text-xs text-neutral-500">Current frame</h4>
               <span className="text-sm text-white">{`${deviceData.motor?.current_frame} of ${deviceData.motor?.frames_auto}`}</span>
             </div>
-            <div className="flex flex-col min-w-24 ">
-              <h4 className="text-xs text-neutral-500">Travel distance</h4>
-              <span className="text-sm text-white">{`${deviceData.motor?.travel_mm.toFixed(
-                1
-              )} mm`}</span>
-            </div>
+            <Button
+              color="red"
+              onClick={() => {
+                stopMotor();
+              }}
+              size="xs"
+              className=" ml-auto"
+            >
+              Stop motor
+            </Button>
           </div>
         </>
       ) : (

@@ -43,10 +43,7 @@ export default function PresetButton({
       title={`Left-click: Load | Right-click: Save`}
     >
       <div className="absolute flex flex-col items-center justify-center text-lg font-semibold inset-2 rounded-full bg-black/50">
-        <span>P{index + 1}</span>
-        <ul className="text-xs font-light opacity-80">
-          <li>kek</li>
-        </ul>
+        <span className="text-xs font-medium">Slot {index + 1}</span>
       </div>
     </Button>
   );
