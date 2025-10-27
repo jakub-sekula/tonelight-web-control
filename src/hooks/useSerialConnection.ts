@@ -99,15 +99,8 @@ export function useSerialDevice() {
     try {
       setStatus("connecting");
 
-      //@ts-expect-error temporarily not using this
-      const filters = [
-        { usbVendorId: 12346, usbProductId: 2 }, // Espressif VID/PID
-      ];
-
       const selected = await navigator.serial.requestPort();
       await selected.open({ baudRate: 115200 });
-
-      console.log(selected);
 
       // --- Wait for readable/writable streams ---
       const start = performance.now();
@@ -130,9 +123,6 @@ export function useSerialDevice() {
             }`
           : "Unknown Port"
       );
-
-      console.log(info);
-      console.log(selected);
 
       // --- Reader ---
       const dec = new TextDecoderStream();
@@ -185,13 +175,6 @@ export function useSerialDevice() {
                   }
                 }
 
-                // Firmware has a bug, w channel controls ir so need to swap responses
-                let key = k;
-                if (key.startsWith("led.")) {
-                  if (key.includes(".w")) key = key.replace(".w", ".ir");
-                  else if (key.includes(".ir")) key = key.replace(".ir", ".w");
-                }
-
                 setDeviceData((prev) => {
                   const next = structuredClone(prev);
                   const parts = k.split(".");
@@ -200,8 +183,6 @@ export function useSerialDevice() {
                   // Special-case LED presets
                   if (k === "led.presets" && typeof val === "string") {
                     const presets: Record<number, LedPresetState> = {};
-
-                    console.log(val);
 
                     val.split(";").forEach((entry) => {
                       const [idxPart, valuesPart] = entry.split(":");
@@ -246,7 +227,7 @@ export function useSerialDevice() {
         }
       })();
 
-      send("status");
+      sendToQueue("status");
     } catch (err) {
       console.error("[Serial] connection failed", err);
       setStatus("error");
@@ -336,12 +317,12 @@ export function useSerialDevice() {
   // helper functions
   const toggleDark = () => {
     console.log("Toggled dark mode");
-    send("led dark");
+    sendToQueue("led dark");
   };
 
   const toggleTriplet = () => {
     console.log("Triggered shutter triplet");
-    send("shutter triplet");
+    sendToQueue("shutter triplet");
   };
 
   const moveMotor = (dir: "forward" | "backward", jog: boolean = false) => {
@@ -361,13 +342,13 @@ export function useSerialDevice() {
     }
 
     console.log(`Motor ${jog ? "jogging" : "moving"} ${dir}`);
-    send(`motor ${dir} ${steps}`);
+    sendToQueue(`motor ${dir} ${steps}`);
   };
 
   const stopMotor = () => {
     console.log("Motor stopped");
-    send("motor stop");
-    send("status");
+    sendToQueue("motor stop");
+    sendToQueue("status");
   };
 
   const setMotorMode = (val: "MANUAL" | "SEMI_AUTO" | "AUTO") => {
@@ -375,12 +356,12 @@ export function useSerialDevice() {
       val === "SEMI_AUTO"
         ? "motor mode semi"
         : `motor mode ${val.toLowerCase()}`;
-    send(cmd);
+    sendToQueue(cmd);
   };
 
   const shoot = () => {
     console.log("Releasing shutter");
-    send("shutter shoot");
+    sendToQueue("shutter shoot");
   };
 
   const loadPreset = (preset: number) => {
@@ -401,7 +382,6 @@ export function useSerialDevice() {
     sendToQueue(`led preset save ${preset}`);
   };
 
-
   const pushPreset = (index: number, preset: LedPresetState) => {
     if (index > 8 || index < 0) {
       console.warn("Incorrect preset number! Allowed 0-8");
@@ -412,6 +392,18 @@ export function useSerialDevice() {
 
     console.log(`Pushing preset to  slot ${index}`);
     sendToQueue(`led preset push ${index} ${presetString}`);
+  };
+
+  const feedForward = () => {
+    sendToQueue("motor feed start forward");
+  };
+
+  const feedBackward = () => {
+    sendToQueue("motor feed start backward");
+  };
+
+  const stopFeeding = () => {
+    sendToQueue("motor feed stop");
   };
 
   const clearLog = () => {
@@ -431,6 +423,9 @@ export function useSerialDevice() {
     toggleDark,
     toggleTriplet,
     moveMotor,
+    feedForward,
+    feedBackward,
+    stopFeeding,
     stopMotor,
     setMotorMode,
     shoot,

@@ -39,7 +39,7 @@ export default function LedControl(props: React.HTMLAttributes<HTMLDivElement>) 
                 value={leds[channel] ?? 0}
                 onChange={(v) =>
                   send(
-                    `led set ${channel == "w" ? "ir" : channel} ${Math.round(
+                    `led set ${channel} ${Math.round(
                       v
                     )}`
                   )
