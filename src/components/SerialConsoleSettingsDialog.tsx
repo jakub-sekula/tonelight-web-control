@@ -25,7 +25,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-
 type SerialConsoleFormValues = {
   level: DebugLevel;
 };
@@ -36,7 +35,7 @@ export default function SerialConsoleSettingsDialog() {
 
   const form = useForm<SerialConsoleFormValues>({
     defaultValues: {
-      level: "info",
+      level: (deviceData.debug?.level || "info").toLowerCase() as DebugLevel,
     },
   });
 
@@ -45,7 +44,7 @@ export default function SerialConsoleSettingsDialog() {
 
   useEffect(() => {
     if (currentLevel)
-      form.reset({ level: currentLevel });
+      form.reset({ level: currentLevel.toLowerCase() as DebugLevel });
   }, [currentLevel, form]);
 
   const onSubmit = (data: SerialConsoleFormValues) => {
@@ -94,13 +93,22 @@ export default function SerialConsoleSettingsDialog() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent align="end">
-                        {["API", "error", "warning", "info", "debug", "verbose"].map(
-                          (level) => (
-                            <SelectItem key={level} value={level} className="capitalize">
-                              {level}
-                            </SelectItem>
-                          )
-                        )}
+                        {[
+                          "api",
+                          "error",
+                          "warning",
+                          "info",
+                          "debug",
+                          "verbose",
+                        ].map((level) => (
+                          <SelectItem
+                            key={level}
+                            value={level}
+                            className="capitalize"
+                          >
+                            {level}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </FormControl>

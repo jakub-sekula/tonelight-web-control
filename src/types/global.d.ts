@@ -114,7 +114,7 @@ declare global {
     [key: string]: unknown;
   }
 
-  type DebugLevel = "api" | "error" | "warning" | "info" | "debug" | "verbose";
+  type DebugLevel = "none" | "api" | "error" | "warning" | "info" | "debug" | "verbose";
 }
 
 export {};
