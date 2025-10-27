@@ -185,7 +185,6 @@ export default function ShutterSettingsDialog() {
                       {...field}
                       type="number"
                       min={0}
-                      step={10}
                       onChange={(e) =>
                         field.onChange(Number(e.target.value) || 0)
                       }
