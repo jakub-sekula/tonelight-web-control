@@ -97,7 +97,7 @@ export default function App() {
         if (key === "j" || key === "l") stopFeeding();
       }
     },
-    400
+    150
   );
 
   return (
