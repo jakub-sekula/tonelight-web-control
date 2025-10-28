@@ -410,6 +410,10 @@ export function useSerialDevice() {
     setLog([]);
   };
 
+  const setActiveChannel = (channel: number) => {
+    sendToQueue(`led channel ${channel}`);
+  };
+
   return {
     port,
     portInfo,
@@ -433,5 +437,6 @@ export function useSerialDevice() {
     savePreset,
     pushPreset,
     clearLog,
+    setActiveChannel
   };
 }
