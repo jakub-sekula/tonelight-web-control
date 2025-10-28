@@ -9,7 +9,11 @@ import KeyboardShortcutsDialog from "./KeyboardShortcutsDialog";
 import { HeaderStateIndicator } from "./HeaderStateIndicator";
 import SerialConsoleDialog from "./SerialConsoleDialog";
 
-export default function Header() {
+export default function Header({
+  setDebug,
+}: {
+  setDebug: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const { disconnect, status, deviceData } = useSerial();
 
   const { motor, shutter, device } = deviceData;
@@ -18,7 +22,11 @@ export default function Header() {
     <header className="flex h-32 w-full justify-center px-4 lg:px-0 ">
       <div className="grid grid-cols-3 max-w-7xl w-full">
         <div className="flex items-center">
-          <img src="/tone-logo-white.svg" className="h-6"></img>
+          <img
+            src="/tone-logo-white.svg"
+            className="h-6"
+            onDoubleClick={() => setDebug((prev) => !prev)}
+          ></img>
         </div>
         <div className="flex gap-8 items-center justify-center">
           {status === "connected" ? (
