@@ -1,27 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { useSerial } from "@/SerialDeviceProvider";
 
-// --- Main component ---
 export default function SerialMonitor() {
-  const { deviceData, send } = useSerial();
-
-  const jogRef = useRef<HTMLDivElement | null>(null);
-
-  // --- Scroll jog area ---
-  useEffect(() => {
-    const el = jogRef.current;
-    if (!el) return;
-    const handler = (e: WheelEvent) => {
-      e.preventDefault();
-      const steps = deviceData.motor?.jog_steps;
-      if (typeof steps !== "number" || steps <= 0) return;
-      send(`motor ${e.deltaY < 0 ? "forward" : "backward"} ${steps}`);
-    };
-    el.addEventListener("wheel", handler, { passive: false });
-    return () => el.removeEventListener("wheel", handler);
-  }, [deviceData.motor?.jog_steps, send]);
+  const { deviceData } = useSerial();
 
   function flatten<T extends Record<string, unknown>>(
     obj: T,
@@ -31,7 +13,7 @@ export default function SerialMonitor() {
       const value = obj[key];
       const newKey = prefix ? `${prefix}.${key}` : key;
 
-      // Skip flattening presets, keep as object
+      // Skip flattening presets
       if (newKey === "led.presets") {
         acc[newKey] = value;
         return acc;
@@ -49,9 +31,25 @@ export default function SerialMonitor() {
 
   const flatState = flatten(deviceData);
 
-  // ----------------------------------------------------------
-  // RENDER
-  // ----------------------------------------------------------
+  // Prepare formatted presets if present
+  let presetLines: string[] = [];
+  const presets = deviceData?.led?.presets;
+  if (presets && typeof presets === "object") {
+    presetLines = Object.entries(presets).map(([index, preset]) => {
+      if (
+        typeof preset === "object" &&
+        preset !== null &&
+        "brightness" in preset &&
+        Array.isArray((preset as RawDevicePreset).brightness)
+      ) {
+        const b = (preset as RawDevicePreset).brightness;
+        const ch = (preset as RawDevicePreset).channel ?? 0;
+        return `${index}: r: ${b.r} g: ${b.g} b: ${b.b} ir: ${b.ir} w: ${b.w} channel: ${ch}`;
+      }
+      return `${index}: ${JSON.stringify(preset)}`;
+    });
+  }
+
   return (
     <div className="p-4 font-mono text-sm">
       {Object.keys(flatState).length > 0 && (
@@ -67,6 +65,7 @@ export default function SerialMonitor() {
               </thead>
               <tbody>
                 {Object.entries(flatState)
+                  .filter(([k]) => k !== "led.presets")
                   .sort(([a], [b]) => a.localeCompare(b))
                   .map(([k, v]) => (
                     <tr
@@ -90,6 +89,31 @@ export default function SerialMonitor() {
                       </td>
                     </tr>
                   ))}
+
+                {/* Preset section */}
+                {presetLines.length > 0 && (
+                  <tr className="bg-neutral-800">
+                    <td
+                      colSpan={2}
+                      className="px-2 py-1 text-gray-300 font-semibold"
+                    >
+                      LED Presets
+                    </td>
+                  </tr>
+                )}
+                {presetLines.map((line, i) => (
+                  <tr
+                    key={`preset-${i}`}
+                    className="odd:bg-neutral-900 even:bg-neutral-950 border-b border-neutral-800"
+                  >
+                    <td className="px-2 py-1 text-gray-400 whitespace-nowrap">
+                      led.presets.{i}
+                    </td>
+                    <td className="px-2 py-1 text-neutral-200 whitespace-pre">
+                      {line}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

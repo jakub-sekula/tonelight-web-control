@@ -6,13 +6,19 @@ declare global {
   // -----------------------------------------------------------
 
   interface LedPresetState {
-  r: number;
-  g: number;
-  b: number;
-  ir: number;
-  w: number;
-  channel: number;
-}
+    r: number;
+    g: number;
+    b: number;
+    ir: number;
+    w: number;
+    channel: number;
+  }
+
+  interface RawDevicePreset {
+    brightness: { r: number; g: number; b: number; ir: number; w: number };
+    channel: number;
+  }
+
   interface LedState {
     mode: string;
     preset: number;
@@ -114,7 +120,14 @@ declare global {
     [key: string]: unknown;
   }
 
-  type DebugLevel = "none" | "api" | "error" | "warning" | "info" | "debug" | "verbose";
+  type DebugLevel =
+    | "none"
+    | "api"
+    | "error"
+    | "warning"
+    | "info"
+    | "debug"
+    | "verbose";
 }
 
 export {};
