@@ -91,8 +91,8 @@ export default function App() {
     },
     (key, isDown) => {
       if (isDown) {
-        if (key === "l") feedBackward();
-        else if (key === "j") feedForward();
+        if (key === "l") feedForward();
+        else if (key === "j") feedBackward();
       } else {
         if (key === "j" || key === "l") stopFeeding();
       }
